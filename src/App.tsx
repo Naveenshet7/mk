@@ -75,7 +75,7 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <CartProvider>
-          <Router basename="/project">
+          <Router>
             <div className="flex flex-col min-h-screen">
               <Header />
               <main className="flex-grow">
