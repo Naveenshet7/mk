@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ShoppingBag, Award, Truck } from 'lucide-react';
 import products from '../data/products';
 
-// Lazy load components
 const ProductCard = lazy(() => import('../components/products/ProductCard'));
 const CategoryCard = lazy(() => import('../components/products/CategoryCard'));
 
-// Loading placeholder
 const LoadingPlaceholder = () => (
   <div className="animate-pulse">
     <div className="bg-gray-200 rounded-lg h-64 w-full"></div>
@@ -15,7 +13,6 @@ const LoadingPlaceholder = () => (
 );
 
 const HomePage = () => {
-  // Memoize filtered products
   const featuredProducts = React.useMemo(() => 
     products.filter(product => product.isFeatured).slice(0, 4),
     []
@@ -26,7 +23,6 @@ const HomePage = () => {
     []
   );
 
-  // Category data
   const categories = [
     {
       id: 'seasonings',
@@ -89,7 +85,7 @@ const HomePage = () => {
               </p>
               <div className="flex flex-wrap gap-4 animate-fade-in-delay-2">
                 <Link 
-                  to="/all-masala" 
+                  to="/all-products" 
                   className="bg-spice-600 hover:bg-spice-500 text-white px-8 py-4 rounded-md font-medium transition-all duration-300 text-lg shadow-lg hover:scale-105"
                 >
                   Shop Now
@@ -212,81 +208,6 @@ const HomePage = () => {
             {bestSellers.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-16 bg-amber-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-serif font-bold mb-4">What Our Customers Say</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Don't just take our word for it. Hear from our satisfied customers about 
-              their experience with Malanad Masala.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="mr-4">
-                  <div className="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center text-amber-800 font-bold">
-                    RS
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-bold">Rahul Singh</h4>
-                  <div className="flex text-amber-500">
-                    {'★'.repeat(5)}
-                  </div>
-                </div>
-              </div>
-              <p className="text-gray-700">
-                "The Garam Masala from Malanad is absolutely divine. The aroma fills the kitchen,
-                and the taste is leagues ahead of any store-bought alternatives. Highly recommend!"
-              </p>
-            </div>
-            
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="mr-4">
-                  <div className="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center text-amber-800 font-bold">
-                    AP
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-bold">Anjali Patel</h4>
-                  <div className="flex text-amber-500">
-                    {'★'.repeat(5)}
-                  </div>
-                </div>
-              </div>
-              <p className="text-gray-700">
-                "I've been using their turmeric and chili powder for months now. The colors are vibrant,
-                and the flavors are authentic. My dishes have never tasted better!"
-              </p>
-            </div>
-            
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <div className="flex items-center mb-4">
-                <div className="mr-4">
-                  <div className="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center text-amber-800 font-bold">
-                    MK
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-bold">Mohammed Khan</h4>
-                  <div className="flex text-amber-500">
-                    {'★'.repeat(4)}{'☆'}
-                  </div>
-                </div>
-              </div>
-              <p className="text-gray-700">
-                "The Essential Spices Combo was perfect as a gift for my daughter who just moved into her
-                new apartment. Great quality spices and beautiful packaging."
-              </p>
-            </div>
           </div>
         </div>
       </section>

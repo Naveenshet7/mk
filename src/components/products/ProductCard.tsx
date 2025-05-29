@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Plus, Minus } from 'lucide-react';
 import { Product } from '../../data/products';
 import { useCart } from '../../context/CartContext';
 
@@ -9,15 +9,33 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, updateQuantity } = useCart();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showQuantityControls, setShowQuantityControls] = useState(false);
   
+  const cartItem = cartItems.find(item => item.id === product.id);
+  const quantity = cartItem?.quantity || 0;
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
+    if (!showQuantityControls) {
+      setShowQuantityControls(true);
+      const { id, name, price, image, category, weight } = product;
+      addToCart({ id, name, price, image, category, weight });
+    }
+  };
+
+  const handleQuantityChange = (e: React.MouseEvent, newQuantity: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (newQuantity === 0) {
+      setShowQuantityControls(false);
+    }
     const { id, name, price, image, category, weight } = product;
-    addToCart({ id, name, price, image, category, weight });
+    updateQuantity(id, newQuantity);
   };
 
   return (
@@ -47,14 +65,36 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
           )}
         </div>
         
-        {/* Quick add to cart button */}
-        <button
-          onClick={handleAddToCart}
-          className="absolute bottom-4 right-4 bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-full shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-          aria-label="Add to cart"
-        >
-          <ShoppingCart size={20} />
-        </button>
+        {/* Add to cart button or quantity controls */}
+        <div className="absolute bottom-4 right-4">
+          {showQuantityControls ? (
+            <div className="flex items-center bg-white rounded-full shadow-md overflow-hidden">
+              <button
+                onClick={(e) => handleQuantityChange(e, Math.max(0, quantity - 1))}
+                className="p-2 hover:bg-gray-100 text-amber-600"
+                aria-label="Decrease quantity"
+              >
+                <Minus size={20} />
+              </button>
+              <span className="px-3 font-medium">{quantity}</span>
+              <button
+                onClick={(e) => handleQuantityChange(e, quantity + 1)}
+                className="p-2 hover:bg-gray-100 text-amber-600"
+                aria-label="Increase quantity"
+              >
+                <Plus size={20} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className="bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-full shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+              aria-label="Add to cart"
+            >
+              <ShoppingCart size={20} />
+            </button>
+          )}
+        </div>
       </div>
       
       <div className="p-4">
