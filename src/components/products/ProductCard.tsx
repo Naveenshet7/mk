@@ -11,7 +11,6 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
   const { addToCart, cartItems, updateQuantity } = useCart();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [showQuantityControls, setShowQuantityControls] = useState(false);
   
   const cartItem = cartItems.find(item => item.id === product.id);
   const quantity = cartItem?.quantity || 0;
@@ -20,8 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (!showQuantityControls) {
-      setShowQuantityControls(true);
+    if (quantity === 0) {
       const { id, name, price, image, category, weight } = product;
       addToCart({ id, name, price, image, category, weight });
     }
@@ -31,11 +29,15 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (newQuantity === 0) {
-      setShowQuantityControls(false);
-    }
     const { id, name, price, image, category, weight } = product;
-    updateQuantity(id, newQuantity);
+    if (newQuantity === 0) {
+      updateQuantity(id, 0);
+    } else {
+      if (quantity === 0) {
+        addToCart({ id, name, price, image, category, weight });
+      }
+      updateQuantity(id, newQuantity);
+    }
   };
 
   return (
@@ -64,37 +66,6 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
             <span className="bg-amber-500 text-white text-xs px-2 py-1 rounded">Bestseller</span>
           )}
         </div>
-        
-        {/* Add to cart button or quantity controls */}
-        <div className="absolute bottom-4 right-4">
-          {showQuantityControls ? (
-            <div className="flex items-center bg-white rounded-full shadow-md overflow-hidden">
-              <button
-                onClick={(e) => handleQuantityChange(e, Math.max(0, quantity - 1))}
-                className="p-2 hover:bg-gray-100 text-amber-600"
-                aria-label="Decrease quantity"
-              >
-                <Minus size={20} />
-              </button>
-              <span className="px-3 font-medium">{quantity}</span>
-              <button
-                onClick={(e) => handleQuantityChange(e, quantity + 1)}
-                className="p-2 hover:bg-gray-100 text-amber-600"
-                aria-label="Increase quantity"
-              >
-                <Plus size={20} />
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleAddToCart}
-              className="bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-full shadow-md transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-              aria-label="Add to cart"
-            >
-              <ShoppingCart size={20} />
-            </button>
-          )}
-        </div>
       </div>
       
       <div className="p-4">
@@ -103,12 +74,43 @@ const ProductCard: React.FC<ProductCardProps> = memo(({ product }) => {
           <span className="text-amber-700 font-medium">₹{product.price}</span>
         </div>
         
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-4">
           <span className="text-sm text-gray-600">{product.weight}</span>
           <div className="flex items-center">
             <span className="text-amber-500">{product.rating} ★</span>
             <span className="text-xs text-gray-500 ml-1">({product.reviewCount})</span>
           </div>
+        </div>
+
+        {/* Quantity Controls */}
+        <div className="flex items-center justify-between mt-4 border-t pt-4">
+          {quantity > 0 ? (
+            <div className="flex items-center justify-between w-full">
+              <button
+                onClick={(e) => handleQuantityChange(e, Math.max(0, quantity - 1))}
+                className="p-2 hover:bg-gray-100 text-amber-600 rounded-md"
+                aria-label="Decrease quantity"
+              >
+                <Minus size={20} />
+              </button>
+              <span className="font-medium">{quantity}</span>
+              <button
+                onClick={(e) => handleQuantityChange(e, quantity + 1)}
+                className="p-2 hover:bg-gray-100 text-amber-600 rounded-md"
+                aria-label="Increase quantity"
+              >
+                <Plus size={20} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-md flex items-center justify-center gap-2 transition-colors"
+            >
+              <ShoppingCart size={18} />
+              Add to Cart
+            </button>
+          )}
         </div>
       </div>
     </Link>
